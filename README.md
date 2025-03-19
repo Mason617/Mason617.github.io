@@ -37,6 +37,7 @@
                     <th>Class Size</th>
                     <th>Prerequisites</th>
                     <th>Current Enrollment</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody id="schedule-body">
@@ -71,6 +72,15 @@
             row.insertCell(1).innerText = classSize;
             row.insertCell(2).innerText = prereq;
             row.insertCell(3).innerText = enrolled;
+            
+            // Create remove button
+            const removeCell = row.insertCell(4);
+            const removeButton = document.createElement("button");
+            removeButton.innerText = "Remove";
+            removeButton.onclick = function() {
+                row.remove();
+            };
+            removeCell.appendChild(removeButton);
         }
     </script>
 
