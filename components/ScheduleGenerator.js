@@ -3,6 +3,7 @@ import "./ScheduleGenerator.css"; // CSS file
 
 function ScheduleGenerator() {
   const [schedule, setSchedule] = useState([]);
+  const [selectedCourseId, setSelectedCourseId] = useState("");
 
   const courses = [
     { id: "CS101", name: "Intro to Programming", size: 50, prereq: "None", enrolled: 45 },
@@ -12,7 +13,19 @@ function ScheduleGenerator() {
   ];
 
   const addClass = (event) => {
-    const selectedCourse = courses.find(course => course.id === event.target.value);
+    const selectedId = event.target.value;
+    setSelectedCourseId(""); // Reset dropdown
+
+    if (!selectedId) return;
+
+    const selectedCourse = courses.find(course => course.id === selectedId);
+    if (!selectedCourse) return;
+
+    // Optional: prevent adding full classes
+    if (selectedCourse.enrolled >= selectedCourse.size) {
+      alert("Course is full!");
+      return;
+    }
 
     if (schedule.some(course => course.id === selectedCourse.id)) {
       alert("Course already added!");
@@ -31,7 +44,14 @@ function ScheduleGenerator() {
       <h1>Class Schedule Generator</h1>
 
       <label htmlFor="course-select">Choose a course:</label>
-      <select id="course-select" onChange={addClass}>
+      <select
+        id="course-select"
+        value={selectedCourseId}
+        onChange={(e) => {
+          setSelectedCourseId(e.target.value);
+          addClass(e);
+        }}
+      >
         <option value="">-- Select a Course --</option>
         {courses.map(course => (
           <option key={course.id} value={course.id}>
@@ -52,26 +72,26 @@ function ScheduleGenerator() {
           </tr>
         </thead>
         <tbody>
-        {schedule && schedule.length > 0 ? (
-        schedule.map((course, index) => (
-        course ? (
-        <tr key={index}>
-          <td>{course.id} - {course.name}</td>
-          <td>{course.size}</td>
-          <td>{course.prereq}</td>
-          <td>{course.enrolled}</td>
-          <td>
-            <button onClick={() => removeClass(course.id)}>Remove</button>
-          </td>
-        </tr>
-      ) : null
-    ))
-  ) : (
-    <tr>
-      <td colSpan="5" style={{ textAlign: "center" }}>No courses added</td>
-    </tr>
-  )}
-</tbody>
+          {schedule.length > 0 ? (
+            schedule.map((course, index) =>
+              course ? (
+                <tr key={index}>
+                  <td>{course.id} - {course.name}</td>
+                  <td>{course.size}</td>
+                  <td>{course.prereq}</td>
+                  <td>{course.enrolled}</td>
+                  <td>
+                    <button onClick={() => removeClass(course.id)}>Remove</button>
+                  </td>
+                </tr>
+              ) : null
+            )
+          ) : (
+            <tr>
+              <td colSpan="5" style={{ textAlign: "center" }}>No courses added</td>
+            </tr>
+          )}
+        </tbody>
       </table>
     </div>
   );
